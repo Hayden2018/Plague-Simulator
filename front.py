@@ -1,7 +1,5 @@
 from subprocess import Popen, PIPE
-import os
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 
 
 p = Popen(['a.exe'], stdin=PIPE, stdout=PIPE)
