@@ -6,6 +6,7 @@ struct Person {
     float hp;
     int x;
     int y;
+    int speed;
     Pathogen* disease;
     bool coughing;
     bool fever;

@@ -1,5 +1,5 @@
 #include <random>
-#include <string>
+#include <ctime>
 #include <iostream>
 #include "header.hpp"
 using namespace std;
@@ -17,6 +17,7 @@ float MASKED_RATIO;
 int MAP_SIZE;
 int POPULATION_SIZE;
 int INCUBATION;
+int SPEED;
 
 bool COPS_HANDLE;
 bool INCUBATION_TRANSFER;
@@ -27,6 +28,7 @@ Person::Person(){
     coughing = false;
     fever = false;
     masked = false;
+    speed = SPEED;
     hp = 100.0;
     disease = nullptr;
     x = rand() % MAP_SIZE;
@@ -40,12 +42,8 @@ void Person::get(Pathogen* p){
 }
 
 void Person::act(){
-    x += 2 * (rand() % 2) - 1;
-    y += 2 * (rand() % 2) - 1;
-    if (x < 0)
-        x = 0;
-    if (y < 0)
-        y = 0;
+    x += (int) (2.5 * (rand() % speed) - speed);
+    y += (int) (2.5 * (rand() % speed) - speed);
     if ( disease && disease->locked )
         disease->locked = false;
 } 
@@ -102,6 +100,8 @@ bool Pathogen::within(int r, Person& a, Person& b){
 
 int main(int argc, char* argv[]){
 
+    srand(time(nullptr));
+
     infected = 0;
     death = 0;
 
@@ -113,6 +113,7 @@ int main(int argc, char* argv[]){
     MAP_SIZE = 800;
     POPULATION_SIZE = 10000;
     INCUBATION = 10;
+    SPEED = 5;
 
     COPS_HANDLE = true;
     INCUBATION_TRANSFER = false;
@@ -135,6 +136,10 @@ int main(int argc, char* argv[]){
                     population[i].disease->act(population);
         for(int i = 0; i < POPULATION_SIZE; ++i)
             if( population[i].disease && population[i].hp > 0 )
+                cout << population[i].x << '_' << population[i].y << '_';
+        cout << endl;
+        for(int i = 0; i < POPULATION_SIZE; ++i)
+            if( population[i].hp <= 0 )
                 cout << population[i].x << '_' << population[i].y << '_';
         cout << endl;
         for(int i = 0; i < POPULATION_SIZE; ++i)
