@@ -4,29 +4,31 @@ struct Person;
 struct Person {
 
     float hp;
+    float jump;
     int x;
     int y;
-    int speed;
     Pathogen* disease;
     bool coughing;
     bool fever;
     bool masked;
+    bool antibody;
 
     Person();
     void get(Pathogen* p);
+    void cure();
     void act();
 
 };
 
 struct Pathogen{
 
-    int incubation;
     float severity;
     float coughing;
-    float fever;
     float transfer;
     float progress;
     Person* host;
+    int r;
+    bool random;
     bool airbrone = true;
     bool locked = true;
 
