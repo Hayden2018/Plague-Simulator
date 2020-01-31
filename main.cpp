@@ -15,7 +15,7 @@ int MAP_SIZE;
 int POPULATION_SIZE;
 int RANGE;
 
-bool COPS_HANDLE;
+bool CORPSE_HANDLE;
 bool AIRBRONE;
 bool RANDOM_PROGRESS;
 
@@ -25,13 +25,16 @@ normal_distribution<float> normal;
 Person::Person(){
     coughing = false;
     fever = false;
-    masked = false;
     antibody = false;
     jump = JUMP_PROB;
     hp = 100.0;
     disease = nullptr;
     x = rand() % MAP_SIZE;
     y = rand() % MAP_SIZE;
+    if (rand() % 1000 < (int) (MASKED_RATIO * 1000))
+        masked = true;
+    else 
+        masked = false;
 }
 
 inline void Person::get(Pathogen* p){
@@ -46,7 +49,7 @@ inline void Person::cure(){
 }
 
 void Person::act(){
-    if( (rand() % 1000) < (int) (jump * 1000)){
+    if( rand() % 1000 < (int) (jump * 1000)){
         x = rand() % MAP_SIZE;
         y = rand() % MAP_SIZE;
     }
@@ -93,7 +96,7 @@ void Pathogen::act(Person* population){
             continue;
         else{
             bool close = within(range(), *host, p);
-            bool hit = (rand() % 1000) < (int) (transfer * 1000);
+            bool hit = rand() % 1000 < (int) (transfer * 1000);
             bool vulnerable = !p.antibody;
             if (close && hit && vulnerable)
                 p.get(new Pathogen());
@@ -111,7 +114,10 @@ inline int Pathogen::range(){
 inline bool Pathogen::within(int r, Person& a, Person& b){
     int dx = a.x - b.x;
     int dy = a.y - b.y;
-    return (dx * dx) + (dy * dy) <= r * r;
+    if ((a.masked || b.masked) && (rand() % 1000 <500))
+        return false;
+    else
+        return (dx * dx) + (dy * dy) <= r * r;
 }
 
 inline string position(Person* p){
@@ -120,18 +126,19 @@ inline string position(Person* p){
 
 int main(int argc, char* argv[]){
 
-    COUGHT_MARGIN = 0.1;
-    PROGRESS_RATE = 0.05;
-    TRANSFER_PROB = 0.1;
-    JUMP_PROB = 0.005;
+    COUGHT_MARGIN = stof(argv[1]);
+    PROGRESS_RATE = stof(argv[2]);
+    TRANSFER_PROB = stof(argv[3]);
+    MASKED_RATIO = stof(argv[4]);
+    JUMP_PROB = stof(argv[5]);
 
-    MAP_SIZE = 800;
-    POPULATION_SIZE = 10000;
-    RANGE = 3;
+    MAP_SIZE = stoi(argv[6]);
+    POPULATION_SIZE = stoi(argv[7]);
+    RANGE = stoi(argv[8]);
 
-    COPS_HANDLE = true;
-    AIRBRONE = true;
-    RANDOM_PROGRESS = true;
+    CORPSE_HANDLE = stoi(argv[9]);
+    AIRBRONE = stoi(argv[10]);
+    RANDOM_PROGRESS = stoi(argv[11]);
 
     srand(time(nullptr));
     normal = normal_distribution<float>(PROGRESS_RATE, PROGRESS_RATE);
@@ -151,7 +158,7 @@ int main(int argc, char* argv[]){
             if (person->hp > 0)
                 person->act();
             if (person->disease)
-                if (!COPS_HANDLE || person->hp > 0)
+                if (!CORPSE_HANDLE || person->hp > 0)
                     person->disease->act(population);
             if (person->disease && person->hp > 0)
                 infected += position(person);

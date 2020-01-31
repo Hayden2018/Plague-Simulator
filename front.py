@@ -1,8 +1,25 @@
 from subprocess import Popen, PIPE
 import matplotlib.pyplot as plt
 
+COUGHT_MARGIN = 0.1
+PROGRESS_RATE = 0.02
+TRANSFER_PROB = 0.1
+MASKED_RATIO = 0.4
+JUMP_PROB = 0.002
 
-p = Popen(['backend.exe'], stdin=PIPE, stdout=PIPE)
+MAP_SIZE = 800
+POPULATION_SIZE = 5000
+RANGE = 4
+
+CORPSE_HANDLE = 1
+AIRBRONE = 1
+RANDOM_PROGRESS = 1
+
+params = [COUGHT_MARGIN, PROGRESS_RATE, TRANSFER_PROB, MASKED_RATIO, JUMP_PROB, MAP_SIZE, 
+          POPULATION_SIZE, RANGE, CORPSE_HANDLE, AIRBRONE, RANDOM_PROGRESS]
+command = ['backend.exe'] + [str(p) for p in params]
+
+p = Popen(command, stdin=PIPE, stdout=PIPE)
 plt.ion()
 plt.rcParams['figure.figsize'] = (10, 8)
 i = 0
