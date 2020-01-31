@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 COUGHT_MARGIN = 0.1
 PROGRESS_RATE = 0.02
-TRANSFER_PROB = 0.1
+TRANSFER_PROB = 0.3
 MASKED_RATIO = 0.4
 JUMP_PROB = 0.002
 
@@ -28,8 +28,8 @@ infected_num = []
 death_num = []
 while True:
     plt.clf()
-    plt.xlim(-100, 1100)
-    plt.ylim(-100, 900)
+    plt.xlim(-100, MAP_SIZE + 200)
+    plt.ylim(-100, MAP_SIZE + 100)
     artists = []
     labels = []
 
@@ -72,7 +72,6 @@ while True:
     stay = plt.waitforbuttonpress()
     if not stay:
         break
-
 
 plt.clf()
 line1, = plt.plot(infected_num, c='red')
